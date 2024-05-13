@@ -1,32 +1,30 @@
-name: Build
-
-on:
-  pull_request:
-    branches:
-      - master
-      - development
-
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    runs-on: self-hosted
     steps:
-    - name: Download repository
+    - continue-on-error: true
+      name: Download repository
       uses: actions/checkout@v3
-
-    - name: Setup Java
+    - continue-on-error: true
+      name: Setup Java
       uses: actions/setup-java@v3
       with:
-        distribution: 'adopt'
+        distribution: adopt
         java-version: '17'
+    - continue-on-error: true
+      name: Build with Gradle
+      run: 'bash ./gradlew build --stacktrace
 
-    - name: Build with Gradle
-      run: |
-        bash ./gradlew build --stacktrace
-
-    - name: Store APK file
+        '
+    - continue-on-error: true
+      name: Store APK file
       uses: actions/upload-artifact@v3
       with:
         name: apk-files
-        path: |
-          app/build/outputs/apk/debug/app-debug.apk
+        path: 'app/build/outputs/apk/debug/app-debug.apk
+
+          '
+name: Build
+on:
+  repository_dispatch:
+    types: trigger-ga___pull-request.yml
